@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2em;
+            background-color: #1e1e1e;
+            color: white;
+        }
+        textarea, input {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+        }
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        .error {
+            color: #ff6b6b;
+            background-color: #2d1b1b;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .loading {
+            color: #4ecdc4;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Chatbot</h1>
+    <textarea id="message" rows="4" placeholder="Type your message..."></textarea>
+    <button id="sendButton" onclick="sendMessage()">Send</button>
+    <h3>Response:</h3>
+    <div id="response"></div>
+
+    <script>
+        console.log("🚀 AI Chatbot frontend loaded");
+        
+        async function sendMessage() {
+            const messageInput = document.getElementById("message");
+            const sendButton = document.getElementById("sendButton");
+            const responseDiv = document.getElementById("response");
+            
+            const message = messageInput.value.trim();
+            
+            console.log("📤 Sending message:", message);
+            
+            // Validate input
+            if (!message) {
+                console.log("❌ Empty message, not sending");
+                responseDiv.innerHTML = '<div class="error">Please enter a message</div>';
+                return;
+            }
+            
+            // Disable button and show loading
+            sendButton.disabled = true;
+            sendButton.textContent = "Sending...";
+            responseDiv.innerHTML = '<div class="loading">🤖 AI is thinking...</div>';
+            
+            try {
+                console.log("🌐 Making API request to /chat");
+                
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                console.log("📥 Response status:", response.status);
+                console.log("📥 Response headers:", response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log("📊 Response data:", data);
+                
+                if (data.error) {
+                    console.log("❌ Server returned error:", data.error);
+                    responseDiv.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                } else {
+                    console.log("✅ Successfully received AI response");
+                    responseDiv.innerHTML = `<div>${data.response}</div>`;
+                }
+                
+            } catch (error) {
+                console.error("❌ Error during API call:", error);
+                responseDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            } finally {
+                // Re-enable button
+                sendButton.disabled = false;
+                sendButton.textContent = "Send";
+                console.log("🔄 Request completed, button re-enabled");
+            }
+        }
+        
+        // Add enter key support
+        document.getElementById("message").addEventListener("keypress", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        console.log("✅ Event listeners attached");
+    </script>
+</body>
+</html>
