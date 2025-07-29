@@ -31,8 +31,8 @@ Thank you for understanding, and I look forward to sharing updated and more powe
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/ebinbijuuu/ai-chatbot-helpdesk.git
-   cd ai-chatbot-helpdesk
+   git clone https://github.com/ebinbijuuu/ai-chatbot.git
+   cd ai-chatbot
 
 2. **Install dependencies:**
    pip install -r requirements.txt
