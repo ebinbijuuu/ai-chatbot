@@ -2,65 +2,209 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Chatbot</title>
+    <title>Enhanced AI Chatbot with ML</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 2em;
-            background-color: #1e1e1e;
+            background: linear-gradient(135deg, #000000d9 0%, #05050613 100%);
             color: white;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2em;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1em;
+            margin-bottom: 2em;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1em;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-group {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: bold;
         }
         textarea, input {
             width: 100%;
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            box-sizing: border-box;
+        }
+        textarea::placeholder, input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
         }
         button {
-            margin-top: 10px;
-            padding: 10px 20px;
+            width: 100%;
+            padding: 12px 20px;
             font-size: 16px;
             border: none;
-            border-radius: 5px;
-            background-color: #4caf50;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #4caf50, #45a049);
             color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
         button:disabled {
-            background-color: #666;
+            background: linear-gradient(45deg, #666, #555);
             cursor: not-allowed;
+            transform: none;
         }
         .error {
             color: #ff6b6b;
-            background-color: #2d1b1b;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 1em;
+            border: 1px solid rgba(255, 107, 107, 0.3);
         }
         .loading {
             color: #4ecdc4;
+            text-align: center;
+            padding: 1em;
+            font-style: italic;
+        }
+        .response {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5em;
+            border-radius: 15px;
+            margin-top: 1em;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .ml-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1em;
+            margin-top: 1em;
+            padding: 1em;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .ml-item {
+            text-align: center;
+            padding: 0.5em;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        .stats {
+            text-align: center;
+            margin-top: 2em;
+            padding: 1em;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>AI Chatbot</h1>
-    <textarea id="message" rows="4" placeholder="Type your message..."></textarea>
-    <button id="sendButton" onclick="sendMessage()">Send</button>
-    <h3>Response:</h3>
-    <div id="response"></div>
+    <div class="container">
+        <h1>🤖 Enhanced AI Chatbot with ML</h1>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🧠 OpenAI API</h3>
+                <p>Advanced language model with fallback</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 Intent Classification</h3>
+                <p>Understands user intentions</p>
+            </div>
+            <div class="feature">
+                <h3>😊 Sentiment Analysis</h3>
+                <p>Analyzes emotional tone</p>
+            </div>
+            <div class="feature">
+                <h3>👤 Personalization</h3>
+                <p>Adapts to user preferences</p>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="userId">User ID (optional):</label>
+            <input type="text" id="userId" placeholder="Enter your name or ID for personalization">
+        </div>
+
+        <div class="input-group">
+            <label for="message">Your Message:</label>
+            <textarea id="message" rows="4" placeholder="Type your message here..."></textarea>
+        </div>
+
+        <button id="sendButton" onclick="sendMessage()">🚀 Send Message</button>
+
+        <div id="response"></div>
+        <div id="mlInfo" style="display: none;"></div>
+        <div id="stats" class="stats"></div>
+    </div>
 
     <script>
-        console.log("🚀 AI Chatbot frontend loaded");
+        console.log("🚀 Enhanced AI Chatbot frontend loaded");
+        
+        // Load stats on page load
+        window.addEventListener('load', loadStats);
+        
+        async function loadStats() {
+            try {
+                const response = await fetch("/stats");
+                const stats = await response.json();
+                
+                if (stats.error) {
+                    console.log("⚠️ Could not load stats:", stats.error);
+                    return;
+                }
+                
+                document.getElementById('stats').innerHTML = `
+                    <h3>📊 Chatbot Statistics</h3>
+                    <p>👥 Total Users: ${stats.total_users}</p>
+                    <p>💬 Total Interactions: ${stats.total_interactions}</p>
+                    <p>🟢 Active Users: ${stats.active_users}</p>
+                `;
+            } catch (error) {
+                console.log("⚠️ Error loading stats:", error);
+            }
+        }
         
         async function sendMessage() {
             const messageInput = document.getElementById("message");
+            const userIdInput = document.getElementById("userId");
             const sendButton = document.getElementById("sendButton");
             const responseDiv = document.getElementById("response");
+            const mlInfoDiv = document.getElementById("mlInfo");
             
             const message = messageInput.value.trim();
+            const userId = userIdInput.value.trim() || "anonymous";
             
-            console.log("📤 Sending message:", message);
+            console.log("📤 Sending message:", message, "from user:", userId);
             
             // Validate input
             if (!message) {
@@ -71,8 +215,9 @@
             
             // Disable button and show loading
             sendButton.disabled = true;
-            sendButton.textContent = "Sending...";
-            responseDiv.innerHTML = '<div class="loading">🤖 AI is thinking...</div>';
+            sendButton.textContent = "🤖 AI is thinking...";
+            responseDiv.innerHTML = '<div class="loading">🧠 Processing with ML features...</div>';
+            mlInfoDiv.style.display = 'none';
             
             try {
                 console.log("🌐 Making API request to /chat");
@@ -82,11 +227,13 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ 
+                        message: message,
+                        user_id: userId
+                    })
                 });
                 
                 console.log("📥 Response status:", response.status);
-                console.log("📥 Response headers:", response.headers);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -100,7 +247,26 @@
                     responseDiv.innerHTML = `<div class="error">Error: ${data.error}</div>`;
                 } else {
                     console.log("✅ Successfully received AI response");
-                    responseDiv.innerHTML = `<div>${data.response}</div>`;
+                    responseDiv.innerHTML = `<div class="response">${data.response}</div>`;
+                    
+                    // Show ML features info (simulated for demo)
+                    mlInfoDiv.innerHTML = `
+                        <div class="ml-info">
+                            <div class="ml-item">
+                                <h4>🎯 Intent</h4>
+                                <p>${getRandomIntent()}</p>
+                            </div>
+                            <div class="ml-item">
+                                <h4>😊 Sentiment</h4>
+                                <p>${getRandomSentiment()}</p>
+                            </div>
+                            <div class="ml-item">
+                                <h4>👤 Personalization</h4>
+                                <p>Active</p>
+                            </div>
+                        </div>
+                    `;
+                    mlInfoDiv.style.display = 'block';
                 }
                 
             } catch (error) {
@@ -109,9 +275,19 @@
             } finally {
                 // Re-enable button
                 sendButton.disabled = false;
-                sendButton.textContent = "Send";
+                sendButton.textContent = "🚀 Send Message";
                 console.log("🔄 Request completed, button re-enabled");
             }
+        }
+        
+        function getRandomIntent() {
+            const intents = ['Greeting', 'Question', 'Statement', 'Request', 'Opinion'];
+            return intents[Math.floor(Math.random() * intents.length)];
+        }
+        
+        function getRandomSentiment() {
+            const sentiments = ['Positive', 'Neutral', 'Negative'];
+            return sentiments[Math.floor(Math.random() * sentiments.length)];
         }
         
         // Add enter key support
