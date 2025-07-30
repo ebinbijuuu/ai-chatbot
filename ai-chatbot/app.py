@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from transformers import pipeline
 import json
 import traceback
 import re
@@ -19,9 +19,17 @@ load_dotenv()
 # Initialize Flask application
 app = Flask(__name__)
 
-# OpenAI Configuration
+# OpenAI Configuration - with fallback (If any possible recruiters do not have an OpenAPI key which is loaded with credits 
+# please contact me and I can provide one so you can see the API Integration at work, else the fallback (less effective)
+# model will be used
+
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-openai.api_key = OPENAI_API_KEY
+if not OPENAI_API_KEY:
+    # Fallback: Set API key directly if not found in .env
+    OPENAI_API_KEY = "YourAPIKeyHere"
+    print("🔑 Using fallback API key configuration")
+
+# OpenAI client will be created when needed
 
 # Initialize ML components
 print("🤖 Initializing AI and ML components...")
@@ -146,7 +154,10 @@ def get_openai_response(user_input, context=""):
         if context:
             messages.insert(1, {"role": "assistant", "content": context})
         
-        response = openai.ChatCompletion.create(
+        from openai import OpenAI
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=150,
@@ -237,17 +248,23 @@ def personalize_response(response, user_id, intent, sentiment):
         # Analyze user preferences
         recent_interactions = user_history[user_id]['interactions'][-5:]
         if recent_interactions:
-            avg_sentiment = np.mean([i['sentiment_score'] for i in recent_interactions])
-            
-            # Adjust response based on sentiment trend
-            if avg_sentiment > 0.6:
-                # User seems positive, be more enthusiastic
-                if not response.startswith(('Great!', 'Excellent!', 'Awesome!')):
-                    response = f"Great! {response}"
-            elif avg_sentiment < 0.4:
-                # User seems negative, be more supportive
-                if not any(word in response.lower() for word in ['understand', 'support', 'help']):
-                    response = f"I understand. {response}"
+            try:
+                # Convert sentiment scores to float to avoid dtype issues
+                sentiment_scores = [float(i['sentiment_score']) for i in recent_interactions]
+                avg_sentiment = np.mean(sentiment_scores)
+                
+                # Adjust response based on sentiment trend
+                if avg_sentiment > 0.6:
+                    # User seems positive, be more enthusiastic
+                    if not response.startswith(('Great!', 'Excellent!', 'Awesome!')):
+                        response = f"Great! {response}"
+                elif avg_sentiment < 0.4:
+                    # User seems negative, be more supportive
+                    if not any(word in response.lower() for word in ['understand', 'support', 'help']):
+                        response = f"I understand. {response}"
+            except Exception as e:
+                print(f"⚠️ Error in sentiment analysis: {e}")
+                # Continue without personalization if there's an error
         
         return response
         
